@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNEKERCLUB - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root { --primary: #000; --accent: #ff3e00; --bg: #f5f6f7; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+        body { background: var(--bg); padding: 20px; color: var(--primary); }
+        .dashboard { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .card { background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        h2 { font-size: 18px; margin-bottom: 20px; border-right: 4px solid var(--accent); padding-right: 10px; }
+        .full { grid-column: span 2; }
+        label { display: block; margin: 10px 0 5px; font-weight: 700; font-size: 13px; }
+        input, textarea { width: 100%; padding: 12px; border: 1.5px solid #eee; border-radius: 10px; outline: none; transition: 0.3s; }
+        input:focus, textarea:focus { border-color: var(--primary); }
+        .drop-zone { border: 2px dashed #ccc; padding: 20px; text-align: center; border-radius: 12px; cursor: pointer; background: #fafafa; }
+        .drop-zone.dragover { border-color: var(--primary); background: #eee; }
+        #preview { width: 100%; max-height: 150px; object-fit: contain; margin-top: 10px; display: none; }
+        .btn { width: 100%; padding: 15px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-weight: 900; cursor: pointer; margin-top: 15px; }
+        .btn:hover { background: var(--accent); }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { background: #000; color: #fff; padding: 12px; font-size: 13px; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+<div class="dashboard">
+    <div class="full" style="text-align: center; margin-bottom: 10px;"><h1>لوحة تحكم SNEKERCLUB</h1></div>
+
+    <div class="card">
+        <h2>إضافة منتج (حذاء)</h2>
+        <label>اسم الحذاء</label>
+        <input type="text" id="pName" placeholder="Nike Air...">
+        <label>السعر ($)</label>
+        <input type="number" id="pPrice" placeholder="0.00">
+        <label>وصف المنتج</label>
+        <textarea id="pDesc" rows="3" placeholder="تفاصيل الحذاء والمقاسات المتوفرة..."></textarea>
+        
+        <label>صورة المنتج (اسحب من سطح المكتب وأفلت هنا)</label>
+        <div class="drop-zone" id="dropZone">
+            <span id="dt">أفلت الصورة هنا أو اضغط للاختيار</span>
+            <input type="file" id="fileIn" hidden accept="image/*">
+            <img id="preview">
+        </div>
+        <button class="btn" onclick="upload()">نشر في المتجر</button>
+    </div>
+
+    <div class="card">
+        <h2>بيانات التواصل</h2>
+        <label>رقم الواتساب</label>
+        <input type="text" id="cPhone" placeholder="+963...">
+        <label>رابط إنستغرام</label>
+        <input type="text" id="cInsta" placeholder="instagram.com/...">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="cEmail" placeholder="info@example.com">
+        <button class="btn" style="background:#444;" onclick="saveC()">حفظ البيانات</button>
+    </div>
+
+    <div class="card full">
+        <h2>المخزون الحالي (الجرد الحي)</h2>
+        <table>
+            <thead><tr><th>الحذاء</th><th>السعر</th><th>الوصف</th><th>إجراء</th></tr></thead>
+            <tbody id="invTable"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const { createClient } = window.supabase;
+
+    let base64 = "";
+    const dz = document.getElementById('dropZone');
+    const fi = document.getElementById('fileIn');
+    const pre = document.getElementById('preview');
+
+    dz.onclick = () => fi.click();
+    dz.ondragover = (e) => { e.preventDefault(); dz.classList.add('dragover'); };
+    dz.ondragleave = () => dz.classList.remove('dragover');
+    dz.ondrop = (e) => { e.preventDefault(); dz.classList.remove('dragover'); loadFile(e.dataTransfer.files[0]); };
+    fi.onchange = (e) => loadFile(e.target.files[0]);
+
+    function loadFile(file) {
+        if(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => { base64 = e.target.result; pre.src = base64; pre.style.display = 'block'; document.getElementById('dt').innerText = file.name; };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    async function upload() {
+        const n = document.getElementById('pName').value;
+        const p = document.getElementById('pPrice').value;
+        const d = document.getElementById('pDesc').value;
+        if(!n || !p || !base64) return alert("أكمل البيانات!");
+
+        const { error } = await db.from('shoes').insert([{ name: n, price: parseFloat(p), description: d, image_url: base64 }]);
+        if(error) alert("خطأ: " + error.message); else location.reload();
+    }
+
+    async function loadInv() {
+        const { data } = await db.from('shoes').select('*').order('created_at', {ascending: false});
+        const table = document.getElementById('invTable');
+        if(data) data.forEach(i => {
+            table.innerHTML += `<tr><td>${i.name}</td><td>$${i.price}</td><td style="font-size:11px; max-width:200px;">${i.description || '-'}</td><td><button onclick="del(${i.id})" style="color:red; background:none; border:none; cursor:pointer;">حذف</button></td></tr>`;
+        });
+    }
+
+    async function del(id) { if(confirm("حذف؟")) { await db.from('shoes').delete().eq('id', id); location.reload(); } }
+
+    function saveC() {
+        const info = { phone: document.getElementById('cPhone').value, insta: document.getElementById('cInsta').value, email: document.getElementById('cEmail').value };
+        localStorage.setItem('sc_contact', JSON.stringify(info));
+        alert("تم الحفظ!");
+    }
+
+    window.onload = () => {
+        loadInv();
+        const s = JSON.parse(localStorage.getItem('sc_contact'));
+        if(s) { document.getElementById('cPhone').value = s.phone; document.getElementById('cInsta').value = s.insta; document.getElementById('cEmail').value = s.email; }
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNEKERCLUB | تواصل معنا</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000;
+            --accent: #ff3e00;
+            --bg: #ffffff;
+            --gray: #f5f5f7;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+
+        body { background-color: var(--bg); color: var(--primary); padding-top: 100px; }
+
+        /* Navigation */
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 8%; position: fixed; width: 100%; top: 0;
+            z-index: 1000; backdrop-filter: blur(15px);
+            background: rgba(255,255,255,0.8); border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .logo { font-size: 24px; font-weight: 900; text-decoration: none; color: #000; }
+        .logo span { color: var(--accent); }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 8%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        h1 { font-size: 50px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; }
+        p.subtitle { font-size: 18px; color: #666; margin-bottom: 40px; }
+
+        /* Contact Cards */
+        .contact-methods { display: grid; gap: 20px; }
+
+        .method-card {
+            background: var(--gray);
+            padding: 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid transparent;
+        }
+
+        .method-card:hover {
+            transform: scale(1.03);
+            background: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+        }
+
+        .icon-box {
+            width: 60px; height: 60px;
+            background: #000; color: #fff;
+            border-radius: 15px;
+            display: flex; align-items: center;
+            justify-content: center; font-size: 24px;
+            margin-left: 20px;
+        }
+
+        .method-info h3 { font-size: 16px; color: #888; margin-bottom: 5px; }
+        .method-info p { font-size: 20px; font-weight: 900; }
+
+        /* Right Side Decoration */
+        .visual-side {
+            background: var(--primary);
+            height: 500px;
+            border-radius: 40px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .visual-side img {
+            position: absolute;
+            width: 120%;
+            opacity: 0.3;
+            filter: grayscale(1);
+        }
+
+        .visual-side h2 { position: relative; font-size: 32px; font-weight: 900; z-index: 1; }
+
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; }
+            h1 { font-size: 36px; }
+            .visual-side { height: 300px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">SNEKER<span>CLUB</span></a>
+        <div class="nav-links">
+            <a href="index.html" style="text-decoration: none; color: #000; margin-left: 20px;">الرئيسية</a>
+            <a href="cart.html" style="text-decoration: none; color: #000;">🛒 السلة</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="info-side">
+            <h1>لا تتردد في <br><span style="color:var(--accent)">التحدث إلينا.</span></h1>
+            <p class="subtitle">نحن هنا للإجابة على استفساراتك حول أكثر الأحذية ندرة في العالم.</p>
+
+            <div class="contact-methods">
+                <a href="https://wa.me/963968585199" class="method-card" target="_blank">
+                    <div class="icon-box">💬</div>
+                    <div class="method-info">
+                        <h3>واتساب (خدمة العملاء)</h3>
+                        <p>+963 968 585 199</p>
+                    </div>
+                </a>
+
+                <a href="https://www.instagram.com/sneakersclub_syria?igsh=MW5kNzV6aXg3N2FqZg==" class="method-card" target="_blank">
+                    <div class="icon-box">📸</div>
+                    <div class="method-info">
+                        <h3>تابعنا على انستغرام</h3>
+                        <p>sneakersclub_syria</p>
+                    </div>
+                </a>
+
+                <div class="method-card">
+                    <div class="icon-box">✉️</div>
+                    <div class="method-info">
+                        <h3>البريد الإلكتروني</h3>
+                        <p>support@snekerclub.sy</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="visual-side">
+            <img src="https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=1000&q=80" alt="Nike Background">
+            <h2>SNEKERCLUB <br> SYRIA</h2>
+        </div>
+    </div>
+
+<script>
+    window.onload = function() {
+        const s = JSON.parse(localStorage.getItem('site_settings'));
+        if(s) {
+            // تحديث رابط الواتساب
+            if(s.whatsapp) {
+                const waLink = document.querySelector('a[href*="wa.me"]');
+                waLink.href = `https://wa.me/${s.whatsapp}`;
+                waLink.querySelector('p').innerText = "+" + s.whatsapp;
+            }
+            // تحديث رابط الانستغرام
+            if(s.insta) {
+                document.querySelector('a[href*="instagram"]').href = s.insta;
+            }
+            // تحديث الموقع
+            if(s.location) {
+                const locCard = document.querySelectorAll('.method-card')[2]; // الكارت الثالث
+                locCard.querySelector('h3').innerText = "موقعنا";
+                locCard.querySelector('p').innerText = s.location;
+                locCard.querySelector('.icon-box').innerText = "📍";
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
